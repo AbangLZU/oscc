@@ -119,6 +119,12 @@ typedef struct
     uint16_t spoof_value_high; /*!< Value to be sent on the high spoof signal. */
 
     uint8_t reserved[2]; /*!< Reserved. */
+#elif defined(CHRYSLER_PACIFICA_HYBRID)
+    uint16_t spoof_value_low; /*!< Value to be sent on the low spoof signal. */
+
+    uint16_t spoof_value_high; /*!< Value to be sent on the high spoof signal. */
+
+    uint8_t reserved[2]; /*!< Reserved. */
 #endif
 } oscc_brake_command_s;
 
