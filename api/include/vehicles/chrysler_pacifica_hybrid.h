@@ -285,7 +285,7 @@ typedef struct
  * @brief Offset value for the low spoof signal taken from a calibration curve.
  *
  */
-#define TORQUE_SPOOF_LOW_SIGNAL_CALIBRATION_CURVE_OFFSET ( 2.32 )
+#define TORQUE_SPOOF_LOW_SIGNAL_CALIBRATION_CURVE_OFFSET ( 2.197 )
 
 /*
  * @brief Scalar value for the high spoof signal taken from a calibration curve.
@@ -297,7 +297,7 @@ typedef struct
  * @brief Offset value for the high spoof signal taken from a calibration curve.
  *
  */
-#define TORQUE_SPOOF_HIGH_SIGNAL_CALIBRATION_CURVE_OFFSET ( 2.63 )
+#define TORQUE_SPOOF_HIGH_SIGNAL_CALIBRATION_CURVE_OFFSET ( 2.775 )
 
 /*
  * @brief Minimum allowed value for the high spoof signal value.
