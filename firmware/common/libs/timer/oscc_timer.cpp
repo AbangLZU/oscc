@@ -33,7 +33,7 @@ ISR(TIMER2_COMPA_vect)
 // timer3 interrupt service routine
 ISR(TIMER3_COMPA_vect)
 {
-    timer_2_isr( );
+    timer_3_isr( );
 }
 #endif
 
@@ -203,15 +203,18 @@ void timer2_init( float frequency, void (*isr)(void) )
 #elif DRIVEKIT
 void timer3_init( float frequency, void (*isr)(void) )
 {
+
+    PRR1 |= _BV(PRTIM3);
+
     // disable interrupts temporarily
     cli();
 
     // clear existing config
-    TCCR2A = 0;
-    TCCR2B = 0;
+    TCCR3A = 0;
+    TCCR3B = 0;
 
     // initialize counter value to 0
-    TCNT2  = 0;
+    TCNT3  = 0;
 
 
     unsigned long prescaler = F_CPU / ((TIMER2_SIZE+1) * frequency);
@@ -220,43 +223,43 @@ void timer3_init( float frequency, void (*isr)(void) )
     {
         prescaler = 1024;
 
-        TCCR2B |= TIMER2_PRESCALER_1024;
+        TCCR3B |= TIMER3_PRESCALER_1024;
     }
     else if ( prescaler > 128 )
     {
         prescaler = 256;
 
-        TCCR2B |= TIMER2_PRESCALER_256;
+        TCCR3B |= TIMER3_PRESCALER_256;
     }
     else if ( prescaler > 64 )
     {
         prescaler = 128;
 
-        TCCR2B |= TIMER2_PRESCALER_128;
+        TCCR3B |= TIMER3_PRESCALER_128;
     }
     else if ( prescaler > 32 )
     {
         prescaler = 64;
 
-        TCCR2B |= TIMER2_PRESCALER_64;
+        TCCR3B |= TIMER3_PRESCALER_64;
     }
     else if ( prescaler > 8 )
     {
         prescaler = 32;
 
-        TCCR2B |= TIMER2_PRESCALER_32;
+        TCCR3B |= TIMER3_PRESCALER_32;
     }
     else if ( prescaler > 1 )
     {
         prescaler = 8;
 
-        TCCR2B |= TIMER2_PRESCALER_8;
+        TCCR3B |= TIMER3_PRESCALER_8;
     }
     else
     {
         prescaler = 1;
 
-        TCCR2B |=  TIMER2_PRESCALER_1;
+        TCCR3B |=  TIMER3_PRESCALER_1;
     }
 
 
@@ -273,18 +276,19 @@ void timer3_init( float frequency, void (*isr)(void) )
 
 
     // set value to compare counter with
-    OCR2A = compare_match_value;
+    OCR3A = compare_match_value;
 
     // turn on compare mode
-    TCCR2B |= _BV(WGM21);
+    TCCR3B |= _BV(WGM31);
 
     // enable compare interrupt
-    TIMSK2 |= _BV(OCIE2A);
+    TIMSK3 |= _BV(OCIE3A);
 
     // attach interrupt service routine
-    timer_2_isr = isr;
+    timer_3_isr = isr;
 
     // re-enable interrupts
     sei();
+
 }
 #endif
