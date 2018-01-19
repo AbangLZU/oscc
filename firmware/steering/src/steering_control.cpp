@@ -30,9 +30,6 @@
 static void read_torque_sensor(
     steering_torque_s * value );
 
-static uint8_t check_torque_sensor_data(
-    steering_torque_s * const value );
-
 static float exponential_moving_average(
     const float alpha,
     const float input,
@@ -106,7 +103,8 @@ void check_for_sensor_faults( void )
         read_torque_sensor(&torque);
 
         // sensor pins tied to ground - a value of zero indicates disconnection
-        if(check_torque_sensor_data( &torque ))
+        if( (torque.high == 0)
+            || (torque.low == 0) )
         {
             ++fault_count;
 
@@ -233,23 +231,4 @@ static void read_torque_sensor(
     sei();
 }
 
-uint8_t check_torque_sensor_data(
-    steering_torque_s * const value )
-{
-    uint8_t error_count = 0;
-    if( value->high > (STEERING_SPOOF_HIGH_SIGNAL_RANGE_MAX >> 2))
-        error_count++;
-    if( value-> high < (STEERING_SPOOF_HIGH_SIGNAL_RANGE_MIN >> 2))
-        error_count++;
-
-    if( value->low > (STEERING_SPOOF_LOW_SIGNAL_RANGE_MAX >> 2))
-        error_count++;
-    if( value->low < (STEERING_SPOOF_LOW_SIGNAL_RANGE_MIN >> 2))
-        error_count++;
-
-    return 0;
-
-    return( error_count );
-
-}
 

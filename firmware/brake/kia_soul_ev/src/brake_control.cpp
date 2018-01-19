@@ -29,9 +29,6 @@
 static void read_brake_pedal_position_sensor(
     brake_pedal_position_s * const value );
 
-static uint8_t check_brake_pedal_position_data(
-    brake_pedal_position_s * const value );
-
 void check_for_operator_override( void )
 {
     if ( g_brake_control_state.enabled == true
@@ -83,8 +80,10 @@ void check_for_sensor_faults( void )
         brake_pedal_position_s brake_pedal_position;
 
         read_brake_pedal_position_sensor( &brake_pedal_position );
-
-        if(check_brake_pedal_position_data( &brake_pedal_position ))
+        
+        // sensor pins tied to ground - a value of zero indicates disconnection
+        if( (brake_pedal_position.high == 0)
+            || (brake_pedal_position.low == 0) )
         {
             ++fault_count;
 
@@ -151,8 +150,8 @@ void update_brake(
         }
 
         cli();
-        g_dac.outputA( spoof_low );
-        g_dac.outputB( spoof_high );
+        g_dac.outputA( spoof_high );
+        g_dac.outputB( spoof_low );
         sei();
 
         status_setGreenLed(1);
@@ -216,22 +215,4 @@ static void read_brake_pedal_position_sensor(
     sei();
 }
 
-uint8_t check_brake_pedal_position_data(
-    brake_pedal_position_s * const value )
-{
-    uint8_t error_count = 0;
-    if( value->high > (BRAKE_SPOOF_HIGH_SIGNAL_RANGE_MAX >> 2))
-        error_count++;
-    if( value-> high < (BRAKE_SPOOF_HIGH_SIGNAL_RANGE_MIN >> 2))
-        error_count++;
 
-    if( value->low > (BRAKE_SPOOF_LOW_SIGNAL_RANGE_MAX >> 2))
-        error_count++;
-    if( value->low < (BRAKE_SPOOF_LOW_SIGNAL_RANGE_MIN >> 2))
-        error_count++;
-
-    return 0;
-
-    return( error_count );
-
-}

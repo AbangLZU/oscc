@@ -6,7 +6,7 @@
 
 
 #ifndef _OSCC_STATUS_H_
-#define _OSCC_STATUSL_H_
+#define _OSCC_STATUS_H_
 
 
 #include <stdint.h>

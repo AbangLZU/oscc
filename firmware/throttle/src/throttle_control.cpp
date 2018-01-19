@@ -29,10 +29,6 @@
 static void read_accelerator_position_sensor(
     accelerator_position_s * const value );
 
-uint8_t check_accelerator_position_data(
-    accelerator_position_s * const value );
-
-
 void check_for_operator_override( void )
 {
     if ( g_throttle_control_state.enabled == true
@@ -85,7 +81,9 @@ void check_for_sensor_faults( void )
 
         read_accelerator_position_sensor( &accelerator_position );
 
-        if(check_accelerator_position_data( &accelerator_position ))
+        // sensor pins tied to ground - a value of zero indicates disconnection
+        if( (accelerator_position.high == 0)
+            || (accelerator_position.low == 0) )
         {
             ++fault_count;
 
@@ -202,22 +200,4 @@ static void read_accelerator_position_sensor(
     sei();
 }
 
-uint8_t check_accelerator_position_data(
-    accelerator_position_s * const value )
-{
-    uint8_t error_count = 0;
-    if( value->high > (THROTTLE_SPOOF_HIGH_SIGNAL_RANGE_MAX >> 2))
-        error_count++;
-    if( value-> high < (THROTTLE_SPOOF_HIGH_SIGNAL_RANGE_MIN >> 2))
-        error_count++;
 
-    if( value->low > (THROTTLE_SPOOF_LOW_SIGNAL_RANGE_MAX >> 2))
-        error_count++;
-    if( value->low < (THROTTLE_SPOOF_LOW_SIGNAL_RANGE_MIN >> 2))
-        error_count++;
-
-    return 0;
-
-    return( error_count );
-
-}
